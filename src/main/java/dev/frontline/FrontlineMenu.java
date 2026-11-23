@@ -78,8 +78,8 @@ public final class FrontlineMenu extends ChestMenu {
 			CapPoint p = d.points.get(editing);
 			container.setItem(4, item(Items.BEACON, Lang.str(lang, "item.pointInfo", p.name, editing + 1, d.points.size()), ChatFormatting.GOLD,
 					editing == d.centerIndex() ? Lang.str(lang, "cmd.list.center") : "-"));
-			container.setItem(10, item(Items.LIME_DYE, Lang.str(lang, "item.setPos1"), ChatFormatting.GREEN, coords(p.p1, lang)));
-			container.setItem(12, item(Items.CYAN_DYE, Lang.str(lang, "item.setPos2"), ChatFormatting.AQUA, coords(p.p2, lang)));
+			container.setItem(10, item(Items.DYE.lime(), Lang.str(lang, "item.setPos1"), ChatFormatting.GREEN, coords(p.p1, lang)));
+			container.setItem(12, item(Items.DYE.cyan(), Lang.str(lang, "item.setPos2"), ChatFormatting.AQUA, coords(p.p2, lang)));
 			container.setItem(14, item(Items.NETHER_STAR, Lang.str(lang, "item.setCenter"), ChatFormatting.GOLD));
 			container.setItem(16, item(Items.BARRIER, Lang.str(lang, "item.delete"), ChatFormatting.RED));
 			container.setItem(28, item(Items.ARROW, Lang.str(lang, "item.moveEarlier"), ChatFormatting.WHITE));
