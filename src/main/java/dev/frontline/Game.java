@@ -37,6 +37,21 @@ public final class Game {
 	private final Map<String, ServerBossEvent> bars = new HashMap<>();
 	private int tickCounter;
 
+	/** player UUID -> index of the point whose new name they are about to type in chat */
+	public final Map<java.util.UUID, String> pendingRename = new HashMap<>();
+
+	/** @return null if renamed, otherwise the translation key of the error */
+	public String rename(CapPoint p, String newName) {
+		if (newName.isBlank()) return "cmd.rename.empty";
+		CapPoint other = data.find(newName);
+		if (other != null && other != p) return "cmd.exists";
+		boolean wasCenter = data.center != null && data.center.equalsIgnoreCase(p.name);
+		p.name = newName;
+		if (wasCenter) data.center = newName;
+		save();
+		return null;
+	}
+
 	private Game() {}
 
 	// ------------------------------------------------------------------ lifecycle
@@ -311,8 +326,8 @@ public final class Game {
 			String lang = e.getKey();
 			ServerBossEvent b = e.getValue();
 			Object[] args = shown == null
-					? new Object[]{pt.name, activeIdx + 1, n}
-					: new Object[]{pt.name, activeIdx + 1, n, shown.display(lang)};
+					? new Object[]{pt.name}
+					: new Object[]{pt.name, shown.display(lang)};
 			b.setName(Lang.comp(lang, key, args));
 			b.setColor(color);
 			b.setOverlay(overlay);

@@ -190,12 +190,9 @@ public final class Cmds {
 		String nn = StringArgumentType.getString(c, "new");
 		CapPoint p = data().find(name);
 		if (p == null) return fail(c, "cmd.unknown", name);
-		if (data().find(nn) != null) return fail(c, "cmd.exists", nn);
-		boolean wasCenter = data().center != null && data().center.equalsIgnoreCase(p.name);
 		String old = p.name;
-		p.name = nn;
-		if (wasCenter) data().center = nn;
-		Game.INSTANCE.save();
+		String err = Game.INSTANCE.rename(p, nn);
+		if (err != null) return fail(c, err, nn);
 		ok(c, "cmd.rename", old, nn);
 		return 1;
 	}

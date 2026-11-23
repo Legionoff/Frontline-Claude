@@ -31,10 +31,11 @@ public final class FrontlineMenu extends ChestMenu {
 	private final ServerPlayer viewer;
 	private final Container container;
 
-	private FrontlineMenu(int id, Inventory inv, Container container, ServerPlayer viewer) {
+	private FrontlineMenu(int id, Inventory inv, Container container, ServerPlayer viewer, int editing) {
 		super(MenuType.GENERIC_9x6, id, inv, container, 6);
 		this.container = container;
 		this.viewer = viewer;
+		this.editing = editing;
 		refresh();
 	}
 
@@ -43,9 +44,13 @@ public final class FrontlineMenu extends ChestMenu {
 	}
 
 	public static void open(ServerPlayer p) {
+		openEditing(p, -1);
+	}
+
+	public static void openEditing(ServerPlayer p, int editing) {
 		String lang = Lang.of(p);
 		p.openMenu(new SimpleMenuProvider(
-				(id, inv, player) -> new FrontlineMenu(id, inv, new SimpleContainer(54), p),
+				(id, inv, player) -> new FrontlineMenu(id, inv, new SimpleContainer(54), p, editing),
 				Lang.comp(lang, "menu.title")));
 	}
 
@@ -81,6 +86,7 @@ public final class FrontlineMenu extends ChestMenu {
 			container.setItem(10, item(Items.DYE.lime(), Lang.str(lang, "item.setPos1"), ChatFormatting.GREEN, coords(p.p1, lang)));
 			container.setItem(12, item(Items.DYE.cyan(), Lang.str(lang, "item.setPos2"), ChatFormatting.AQUA, coords(p.p2, lang)));
 			container.setItem(14, item(Items.NETHER_STAR, Lang.str(lang, "item.setCenter"), ChatFormatting.GOLD));
+			container.setItem(22, item(Items.NAME_TAG, Lang.str(lang, "item.rename"), ChatFormatting.YELLOW, p.name));
 			container.setItem(16, item(Items.BARRIER, Lang.str(lang, "item.delete"), ChatFormatting.RED));
 			container.setItem(28, item(Items.ARROW, Lang.str(lang, "item.moveEarlier"), ChatFormatting.WHITE));
 			container.setItem(30, item(Items.SPECTRAL_ARROW, Lang.str(lang, "item.moveLater"), ChatFormatting.WHITE));
@@ -121,7 +127,7 @@ public final class FrontlineMenu extends ChestMenu {
 					+ (p.complete() ? "" : " " + Lang.str(lang, "cmd.list.incomplete"));
 			container.setItem(POINT_START + i, item(i == center ? Items.BEACON : Items.CONCRETE.white(), title,
 					i == center ? ChatFormatting.GOLD : ChatFormatting.WHITE,
-					Lang.str(lang, "item.point.lore1")));
+					Lang.str(lang, "item.point.lore1"), Lang.str(lang, "item.point.lore2"), Lang.str(lang, "item.point.lore3")));
 		}
 	}
 
@@ -157,6 +163,11 @@ public final class FrontlineMenu extends ChestMenu {
 			case 30 -> {
 				g.movePoint(editing, 1);
 				editing = d.points.indexOf(p);
+			}
+			case 22 -> {
+				g.pendingRename.put(sp.getUUID(), p.name);
+				sp.sendSystemMessage(Lang.comp(lang, "item.renamePrompt", p.name));
+				sp.closeContainer();
 			}
 			case 49 -> editing = -1;
 			default -> { }
@@ -218,7 +229,11 @@ public final class FrontlineMenu extends ChestMenu {
 			}
 			default -> {
 				int idx = slotId - POINT_START;
-				if (idx >= 0 && idx < d.points.size()) editing = idx;
+				if (idx >= 0 && idx < d.points.size()) {
+					if (button == 1 && clickType == ContainerInput.QUICK_MOVE) g.movePoint(idx, 1);   // shift + right click
+					else if (button == 1) g.movePoint(idx, -1);                                         // right click
+					else editing = idx;                                                                 // left click
+				}
 			}
 		}
 		refresh();
