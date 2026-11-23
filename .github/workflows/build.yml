@@ -24,19 +24,18 @@ jobs:
       - name: API diagnostics
         if: failure()
         run: |
-          J=$(find ~/.gradle -name 'minecraft*.jar' -not -name '*sources*' | head -5)
-          echo "JARS: $J"
-          for j in $J; do
-            echo "== $j"
-            unzip -l "$j" | grep -E 'world/inventory/.*Click|world/inventory/Container[A-Z]' | head -20
-            javap -cp "$j" net.minecraft.world.item.Items | grep -E 'CONCRETE|BANNER|GLASS_PANE' | head -20
-            javap -cp "$j" net.minecraft.server.level.ServerBossEvent | head -20
-            javap -cp "$j" com.mojang.blaze3d.platform.InputConstants\$Type | head -20
-            javap -cp "$j" net.minecraft.world.inventory.AbstractContainerMenu | grep -E 'clicked|Click|Input' | head
-          done
+          J=$HOME/.gradle/caches/fabric-loom/minecraftMaven/net/minecraft/minecraft-merged-deobf/26.3/minecraft-merged-deobf-26.3.jar
+          javap -cp "$J" net.minecraft.world.level.block.ColorCollection | head -30
+          javap -cp "$J" net.minecraft.world.inventory.ContainerInput | head -20
+          unzip -l "$J" | grep -E 'blaze3d/platform/InputConstants' | head
+          javap -cp "$J" -constants 'net.minecraft.client.KeyMapping' | grep -E 'KeyMapping\(|Category' | head
+          unzip -l "$J" | grep -E 'client/KeyMapping' | head
           F=$(find ~/.gradle -name 'fabric-networking-api-v1*.jar' -not -name '*sources*' | head -1)
           echo "NET: $F"
           javap -cp "$F" net.fabricmc.fabric.api.networking.v1.PayloadTypeRegistry | head -20
+          K=$(find ~/.gradle -name 'fabric-key-mapping-api-v1*.jar' -not -name '*sources*' | head -1)
+          echo "KEY: $K"
+          unzip -l "$K" | grep -i class | head
       - uses: actions/upload-artifact@v4
         with:
           name: frontline-gamemode
