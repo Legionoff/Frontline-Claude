@@ -21,21 +21,14 @@ jobs:
           gradle-version: 9.7.1
       - name: Build
         run: gradle build --stacktrace
-      - name: API diagnostics
-        if: failure()
+      - name: Server smoke test
         run: |
-          J=$HOME/.gradle/caches/fabric-loom/minecraftMaven/net/minecraft/minecraft-merged-deobf/26.3/minecraft-merged-deobf-26.3.jar
-          javap -cp "$J" net.minecraft.world.level.block.ColorCollection | head -30
-          javap -cp "$J" net.minecraft.world.inventory.ContainerInput | head -20
-          unzip -l "$J" | grep -E 'blaze3d/platform/InputConstants' | head
-          javap -cp "$J" -constants 'net.minecraft.client.KeyMapping' | grep -E 'KeyMapping\(|Category' | head
-          unzip -l "$J" | grep -E 'client/KeyMapping' | head
-          F=$(find ~/.gradle -name 'fabric-networking-api-v1*.jar' -not -name '*sources*' | head -1)
-          echo "NET: $F"
-          javap -cp "$F" net.fabricmc.fabric.api.networking.v1.PayloadTypeRegistry | head -20
-          K=$(find ~/.gradle -name 'fabric-key-mapping-api-v1*.jar' -not -name '*sources*' | head -1)
-          echo "KEY: $K"
-          unzip -l "$K" | grep -i class | head
+          mkdir -p run && echo "eula=true" > run/eula.txt
+          printf 'cappoint create A\ncappoint create "Центр"\ncappoint edge A pos1 0 60 0\ncappoint edge A pos2 5 65 5\ncappoint edge "Центр" pos1 10 60 0\ncappoint edge "Центр" pos2 15 65 5\ncappoint list\nfrontline time capture 5\nfrontline time hold 5\nfrontline start\nfrontline pause\nfrontline resume\nfrontline swap\nfrontline preset save test\nfrontline preset list\nfrontline stop\nstop\n' > /tmp/cmds.txt
+          (sleep 90; cat /tmp/cmds.txt; sleep 25) | timeout 400 gradle runServer --no-daemon 2>&1 | tee /tmp/server.log || true
+          grep -q "Frontline Gamemode loaded" /tmp/server.log
+          ! grep -E "Exception|ERROR" /tmp/server.log | grep -vi "WARN" | grep -i frontline
+          grep -E "Point A created|Capture points|Round started|Preset test saved|Presets:" /tmp/server.log
       - uses: actions/upload-artifact@v4
         with:
           name: frontline-gamemode
