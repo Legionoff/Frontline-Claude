@@ -57,6 +57,7 @@ public final class Cmds {
 		cap.then(Commands.literal("create").then(Commands.argument("name", StringArgumentType.string()).executes(Cmds::create)));
 		cap.then(Commands.literal("remove").then(pointArg().executes(Cmds::remove)));
 		cap.then(Commands.literal("list").executes(Cmds::list));
+		cap.then(Commands.literal("rename").then(pointArg().then(Commands.argument("new", StringArgumentType.string()).executes(Cmds::rename))));
 		cap.then(Commands.literal("center").then(pointArg().executes(Cmds::center)));
 		cap.then(Commands.literal("move").then(pointArg()
 				.then(Commands.literal("earlier").executes(c -> move(c, -1)))
@@ -182,6 +183,21 @@ public final class Cmds {
 			ok(c, "cmd.list.entry", i + 1, p.name, mark, state);
 		}
 		return d.points.size();
+	}
+
+	private static int rename(CommandContext<CommandSourceStack> c) {
+		String name = StringArgumentType.getString(c, "name");
+		String nn = StringArgumentType.getString(c, "new");
+		CapPoint p = data().find(name);
+		if (p == null) return fail(c, "cmd.unknown", name);
+		if (data().find(nn) != null) return fail(c, "cmd.exists", nn);
+		boolean wasCenter = data().center != null && data().center.equalsIgnoreCase(p.name);
+		String old = p.name;
+		p.name = nn;
+		if (wasCenter) data().center = nn;
+		Game.INSTANCE.save();
+		ok(c, "cmd.rename", old, nn);
+		return 1;
 	}
 
 	private static int center(CommandContext<CommandSourceStack> c) {

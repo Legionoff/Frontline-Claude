@@ -1,7 +1,7 @@
 # Frontline Gamemode
 
 Fabric mod for Minecraft 26.3 (server-side; the client part is optional and only adds a rebindable key for the menu).
-Tug-of-war game mode: two teams push the front line across ordered capture points.
+King-of-the-hill tug-of-war: two teams fight over one capture point at a time and pull the rope along ordered points.
 
 ## Build
 Pushing to GitHub runs the `build` workflow; the jar is in the run's artifacts, and on `main` also in the **latest** release.
@@ -16,7 +16,7 @@ Requires Fabric Loader >= 0.20.0, Fabric API, Java 25. Put the jar in the server
 - `/frontline preset save|load|delete|list <name>`
 
 Points are ordered from the Red base (first) to the Blue base (last); the central point is where the round starts.
-Red pushes toward the last point, Blue toward the first (`/frontline swap` flips it).
-The menu (key K by default, rebindable in Controls, or `/frontline menu`) offers every function.
+Red pulls the rope toward the last point, Blue toward the first (`/frontline swap` flips it).
+The menu (key K by default, rebindable in Controls, or `/frontline menu`) offers every function, including creating points, setting their corners at your position and reordering them (`/cappoint` commands still work too, plus `/cappoint rename`).
 Languages: English, Russian, German, Ukrainian (chosen from the player's client language).
 Data lives in `config/frontline/` (`state.json`, `presets/`).
