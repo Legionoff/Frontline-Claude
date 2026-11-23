@@ -10,7 +10,7 @@
   "chat.capStart": "%s started capturing point %s!",
   "chat.holdStart": "%s captured point %s and must now hold it!",
   "chat.advance": "%s held point %s! The rope is pulled to point %s.",
-  "chat.final": "The rope is pulled all the way: the final sector was captured by %s!",
+  "chat.final": "The final sector was captured by %s!",
   "title.over": "ROUND OVER",
   "title.winner": "%s win!",
   "chat.roundStart": "Round started! Fight for point %s.",
@@ -77,5 +77,13 @@
   "item.point.lore3": "Shift + right click: move later",
   "item.rename": "Rename point",
   "item.renamePrompt": "Type the new name of point %s in chat (or 'cancel').",
-  "cmd.rename.empty": "The name must not be empty."
+  "cmd.rename.empty": "The name must not be empty.",
+  "item.rollbackAccel": "Rollback speed-up: %s",
+  "item.rollbackAccel.lore": "Multiplier while the enemy has the advantage on the point",
+  "item.capDecay": "Capture rollback: %s",
+  "item.capDecay.lore": "Speed at which an abandoned capture rolls back",
+  "item.holdDecay": "Hold rollback: %s",
+  "item.holdDecay.lore": "Speed at which an abandoned hold rolls back",
+  "item.cycle.lore1": "Left click: next value (0.5X-2.5X)",
+  "item.cycle.lore2": "Right click: previous value"
 }

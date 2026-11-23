@@ -69,6 +69,18 @@ public final class FrontlineMenu extends ChestMenu {
 
 	private int editing = -1;
 
+	private static String fmt(double v) {
+		return (v == Math.floor(v) ? String.valueOf((int) v) : String.valueOf(v)) + "X";
+	}
+
+	/** steps through 0.5X, 1X, 1.5X, 2X, 2.5X */
+	private static double cycle(double v, boolean forward) {
+		int i = (int) Math.round(v * 2) + (forward ? 1 : -1); // 1..5 valid
+		if (i > 5) i = 1;
+		if (i < 1) i = 5;
+		return i / 2.0;
+	}
+
 	private static String coords(int[] p, String lang) {
 		return p == null ? Lang.str(lang, "item.notSet") : p[0] + " " + p[1] + " " + p[2];
 	}
@@ -113,6 +125,13 @@ public final class FrontlineMenu extends ChestMenu {
 		container.setItem(13, item(Items.STAINED_GLASS_PANE.red(), "-10", ChatFormatting.RED));
 		container.setItem(14, item(Items.CLOCK, Lang.str(lang, "item.holdTime", d.holdSeconds), ChatFormatting.WHITE));
 		container.setItem(15, item(Items.STAINED_GLASS_PANE.lime(), "+10", ChatFormatting.GREEN));
+
+		container.setItem(8, item(Items.SUGAR, Lang.str(lang, "item.rollbackAccel", fmt(d.rollbackAccel)), ChatFormatting.AQUA,
+				Lang.str(lang, "item.rollbackAccel.lore"), Lang.str(lang, "item.cycle.lore1"), Lang.str(lang, "item.cycle.lore2")));
+		container.setItem(16, item(Items.REPEATER, Lang.str(lang, "item.capDecay", fmt(d.captureDecay)), ChatFormatting.WHITE,
+				Lang.str(lang, "item.capDecay.lore"), Lang.str(lang, "item.cycle.lore1"), Lang.str(lang, "item.cycle.lore2")));
+		container.setItem(17, item(Items.COMPARATOR, Lang.str(lang, "item.holdDecay", fmt(d.holdDecay)), ChatFormatting.WHITE,
+				Lang.str(lang, "item.holdDecay.lore"), Lang.str(lang, "item.cycle.lore1"), Lang.str(lang, "item.cycle.lore2")));
 
 		container.setItem(18, item(Items.BANNER.red(), Lang.str(lang, "item.joinRed"), ChatFormatting.RED));
 		container.setItem(19, item(Items.BANNER.blue(), Lang.str(lang, "item.joinBlue"), ChatFormatting.BLUE));
@@ -212,6 +231,9 @@ public final class FrontlineMenu extends ChestMenu {
 			case 11 -> { d.captureSeconds = Math.min(3600, d.captureSeconds + 10); g.save(); }
 			case 13 -> { d.holdSeconds = Math.max(1, d.holdSeconds - 10); g.save(); }
 			case 15 -> { d.holdSeconds = Math.min(3600, d.holdSeconds + 10); g.save(); }
+			case 8 -> { d.rollbackAccel = cycle(d.rollbackAccel, button != 1); g.save(); }
+			case 16 -> { d.captureDecay = cycle(d.captureDecay, button != 1); g.save(); }
+			case 17 -> { d.holdDecay = cycle(d.holdDecay, button != 1); g.save(); }
 			case 18 -> g.setTeam(sp, Team.RED);
 			case 19 -> g.setTeam(sp, Team.BLUE);
 			case 20 -> g.setTeam(sp, null);

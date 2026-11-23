@@ -10,6 +10,11 @@ public final class Data {
 	public int holdSeconds = 60;
 	/** true: red starts at point #1 and pushes toward the last point, blue the opposite way. */
 	public boolean redPushesUp = true;
+	/** rollback speed of an abandoned capture / hold bar, relative to the fill speed */
+	public double captureDecay = 0.5;
+	public double holdDecay = 0.5;
+	/** extra multiplier for the rollback while the enemy has the numerical superiority */
+	public double rollbackAccel = 2.0;
 	public String center;
 	public List<CapPoint> points = new ArrayList<>();
 	/** player UUID -> team name */

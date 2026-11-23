@@ -10,7 +10,7 @@
   "chat.capStart": "%s beginnt, Punkt %s zu erobern!",
   "chat.holdStart": "%s hat Punkt %s erobert und muss ihn nun halten!",
   "chat.advance": "%s hat Punkt %s gehalten! Das Seil wird zu Punkt %s gezogen.",
-  "chat.final": "Das Seil ist ganz durchgezogen: Der letzte Sektor wurde erobert von %s!",
+  "chat.final": "Der letzte Sektor wurde erobert von %s!",
   "title.over": "RUNDE BEENDET",
   "title.winner": "%s gewinnt!",
   "chat.roundStart": "Die Runde beginnt! Kämpft um Punkt %s.",
@@ -77,5 +77,13 @@
   "item.point.lore3": "Shift + Rechtsklick: weiter nach hinten",
   "item.rename": "Punkt umbenennen",
   "item.renamePrompt": "Schreibe den neuen Namen von Punkt %s in den Chat (oder 'cancel').",
-  "cmd.rename.empty": "Der Name darf nicht leer sein."
+  "cmd.rename.empty": "Der Name darf nicht leer sein.",
+  "item.rollbackAccel": "Rücklauf-Beschleunigung: %s",
+  "item.rollbackAccel.lore": "Multiplikator, wenn der Gegner auf dem Punkt überlegen ist",
+  "item.capDecay": "Eroberungs-Rücklauf: %s",
+  "item.capDecay.lore": "Geschwindigkeit, mit der eine verlassene Eroberung zurückläuft",
+  "item.holdDecay": "Halte-Rücklauf: %s",
+  "item.holdDecay.lore": "Geschwindigkeit, mit der ein verlassenes Halten zurückläuft",
+  "item.cycle.lore1": "Linksklick: nächster Wert (0.5X-2.5X)",
+  "item.cycle.lore2": "Rechtsklick: vorheriger Wert"
 }

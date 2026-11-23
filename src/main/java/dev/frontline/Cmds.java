@@ -145,6 +145,9 @@ public final class Cmds {
 		cur.captureSeconds = p.captureSeconds;
 		cur.holdSeconds = p.holdSeconds;
 		cur.redPushesUp = p.redPushesUp;
+		cur.captureDecay = p.captureDecay;
+		cur.holdDecay = p.holdDecay;
+		cur.rollbackAccel = p.rollbackAccel;
 		Game.INSTANCE.save();
 		return true;
 	}

@@ -28,10 +28,9 @@ public final class Game {
 
 	// state of the active point
 	public int activeIdx;
-	public Team owner;      // team that completed the capture (now holding)
-	public Team capTeam;    // team currently filling the capture bar
-	public int capTicks;
-	public int holdTicks;
+	public Team capTeam;    // team whose progress is on the bar (null = neutral)
+	public double capTicks; // 0..cap; at cap the point is captured and the hold bar runs
+	public double holdTicks;
 	public boolean contested;
 
 	private final Map<String, ServerBossEvent> bars = new HashMap<>();
@@ -112,7 +111,7 @@ public final class Game {
 		phase = Phase.RUNNING;
 		for (ServerPlayer p : server.getPlayerList().getPlayers()) {
 			String lang = Lang.of(p);
-			p.sendSystemMessage(Lang.comp(lang, "chat.roundStart", data.points.get(activeIdx).name));
+			p.sendSystemMessage(Lang.comp(lang, "chat.roundStart", pointName(data.points.get(activeIdx).name)));
 		}
 		return null;
 	}
@@ -137,7 +136,6 @@ public final class Game {
 	}
 
 	private void resetPoint() {
-		owner = null;
 		capTeam = null;
 		capTicks = 0;
 		holdTicks = 0;
@@ -153,7 +151,7 @@ public final class Game {
 	private void broadcastTeam(Team t, String key, String pointName) {
 		for (ServerPlayer p : server.getPlayerList().getPlayers()) {
 			String lang = Lang.of(p);
-			p.sendSystemMessage(Lang.comp(lang, key, t.display(lang), pointName));
+			p.sendSystemMessage(Lang.comp(lang, key, t.display(lang), pointName(pointName)));
 		}
 	}
 
@@ -166,9 +164,23 @@ public final class Game {
 		if (pt == null || !pt.complete()) return;
 
 		if (phase == Phase.RUNNING) logic(pt);
+		if (phase == Phase.STOPPED) return; // the round ended in this tick: keep the bar hidden
 		updateBars(pt);
 		tickCounter++;
 		if (tickCounter % 10 == 0) drawBorders();
+	}
+
+	private int capLimit() {
+		return Math.max(1, data.captureSeconds * 20);
+	}
+
+	private int holdLimit() {
+		return Math.max(1, data.holdSeconds * 20);
+	}
+
+	/** Team that has fully captured the point (and is holding it), or null. */
+	private Team owner() {
+		return capTeam != null && capTicks >= capLimit() ? capTeam : null;
 	}
 
 	private void logic(CapPoint pt) {
@@ -186,51 +198,45 @@ public final class Game {
 		if (contested) return;
 
 		Team sup = red > blue ? Team.RED : (blue > red ? Team.BLUE : null);
-		int cap = Math.max(1, data.captureSeconds * 20);
-		int hold = Math.max(1, data.holdSeconds * 20);
+		int cap = capLimit();
+		int hold = holdLimit();
 
 		if (sup == null) {
-			// nobody decides: a finished capture keeps counting down the hold timer
-			if (owner != null && capTeam == null) {
-				holdTicks++;
-				checkHold(hold, pt);
-			}
+			// empty point: progress slowly rolls back (hold first, then capture)
+			rollback(data.captureDecay, data.holdDecay);
 			return;
 		}
 
-		if (owner == sup) {
-			if (capTeam == null) {
-				holdTicks++;
-				checkHold(hold, pt);
-			} else {
-				// owner pushes the enemy's partial capture back
-				capTicks--;
-				if (capTicks <= 0) {
-					capTicks = 0;
-					capTeam = null;
-				}
-			}
-			return;
-		}
-
-		// sup does not own the point
 		if (capTeam == null || capTeam == sup) {
 			if (capTeam == null) {
 				capTeam = sup;
 				capTicks = 0;
-				holdTicks = 0; // the enemy's bright hold bar vanishes instantly
+				holdTicks = 0;
 				broadcastTeam(sup, "chat.capStart", pt.name);
 			}
-			capTicks++;
-			if (capTicks >= cap) {
-				owner = sup;
-				capTeam = null;
-				capTicks = 0;
-				holdTicks = 0;
-				broadcastTeam(sup, "chat.holdStart", pt.name);
+			if (capTicks < cap) {
+				capTicks++;
+				if (capTicks >= cap) {
+					capTicks = cap;
+					holdTicks = 0;
+					broadcastTeam(sup, "chat.holdStart", pt.name);
+				}
+			} else {
+				holdTicks++;
+				checkHold(hold, pt);
 			}
 		} else {
-			capTicks--;
+			// the enemy has the progress: their presence speeds the rollback up
+			rollback(data.captureDecay * data.rollbackAccel, data.holdDecay * data.rollbackAccel);
+		}
+	}
+
+	private void rollback(double capRate, double holdRate) {
+		if (capTeam == null) return;
+		if (holdTicks > 0) {
+			holdTicks = Math.max(0, holdTicks - holdRate);
+		} else if (capTicks > 0) {
+			capTicks -= capRate;
 			if (capTicks <= 0) {
 				capTicks = 0;
 				capTeam = null;
@@ -239,8 +245,8 @@ public final class Game {
 	}
 
 	private void checkHold(int hold, CapPoint pt) {
-		if (holdTicks < hold || owner == null) return;
-		Team winner = owner;
+		Team winner = owner();
+		if (holdTicks < hold || winner == null) return;
 		boolean up = (winner == Team.RED) == data.redPushesUp;
 		int next = activeIdx + (up ? 1 : -1);
 		if (next < 0 || next >= data.points.size()) {
@@ -252,8 +258,12 @@ public final class Game {
 		resetPoint();
 		for (ServerPlayer p : server.getPlayerList().getPlayers()) {
 			String lang = Lang.of(p);
-			p.sendSystemMessage(Lang.comp(lang, "chat.advance", winner.display(lang), pt.name, nextName));
+			p.sendSystemMessage(Lang.comp(lang, "chat.advance", winner.display(lang), pointName(pt.name), pointName(nextName)));
 		}
+	}
+
+	private static net.minecraft.network.chat.MutableComponent pointName(String name) {
+		return Component.literal(name).withStyle(net.minecraft.ChatFormatting.GOLD);
 	}
 
 	private void finish(Team winner) {
@@ -287,8 +297,9 @@ public final class Game {
 
 	private void updateBars(CapPoint pt) {
 		int n = data.points.size();
-		int cap = Math.max(1, data.captureSeconds * 20);
-		int hold = Math.max(1, data.holdSeconds * 20);
+		int cap = capLimit();
+		int hold = holdLimit();
+		Team owner = owner();
 
 		BossEvent.BossBarColor color = BossEvent.BossBarColor.WHITE;
 		BossEvent.BossBarOverlay overlay = BossEvent.BossBarOverlay.PROGRESS;
@@ -302,17 +313,17 @@ public final class Game {
 		} else if (contested) {
 			key = "bar.contested";
 			progress = barProgress(cap, hold);
-		} else if (capTeam != null) {
+		} else if (capTeam != null && owner == null) {
 			key = "bar.capturing";
 			shown = capTeam;
 			color = capTeam.barColor;
 			overlay = BossEvent.BossBarOverlay.NOTCHED_10;
-			progress = Math.min(1f, capTicks / (float) cap);
+			progress = Math.min(1f, (float) (capTicks / cap));
 		} else if (owner != null) {
 			key = "bar.holding";
 			shown = owner;
 			color = owner.barColor;
-			progress = Math.min(1f, holdTicks / (float) hold);
+			progress = Math.min(1f, (float) (holdTicks / hold));
 		}
 
 		for (ServerPlayer p : server.getPlayerList().getPlayers()) {
@@ -336,9 +347,9 @@ public final class Game {
 	}
 
 	private float barProgress(int cap, int hold) {
-		if (capTeam != null) return Math.min(1f, capTicks / (float) cap);
-		if (owner != null) return Math.min(1f, holdTicks / (float) hold);
-		return 1f;
+		if (capTeam == null) return 1f;
+		if (owner() != null) return Math.min(1f, (float) (holdTicks / hold));
+		return Math.min(1f, (float) (capTicks / cap));
 	}
 
 	public void removePlayerFromBars(ServerPlayer p) {
@@ -358,10 +369,10 @@ public final class Game {
 				rgb = 0x555555;
 			} else if (contested || phase == Phase.PAUSED) {
 				rgb = 0x888888;
+			} else if (owner() != null) {
+				rgb = owner().fullRgb;
 			} else if (capTeam != null) {
 				rgb = capTeam.paleRgb;
-			} else if (owner != null) {
-				rgb = owner.fullRgb;
 			} else {
 				rgb = 0xDDDDDD;
 			}
