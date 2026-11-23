@@ -17,7 +17,7 @@ public class FrontlineClient implements ClientModInitializer {
 	public void onInitializeClient() {
 		KeyMapping.Category category = KeyMapping.Category.register(Identifier.fromNamespaceAndPath("frontline", "general"));
 		openMenu = KeyMappingHelper.registerKeyMapping(
-				new KeyMapping("key.frontline.menu", InputConstants.Type.KEYSYM, InputConstants.KEY_K, category));
+				new KeyMapping("key.frontline.menu", InputConstants.KEY_K, category));
 
 		ClientTickEvents.END_CLIENT_TICK.register(client -> {
 			while (openMenu.consumeClick()) {

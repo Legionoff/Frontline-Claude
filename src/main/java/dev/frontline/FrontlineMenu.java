@@ -12,7 +12,7 @@ import net.minecraft.world.SimpleMenuProvider;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.ChestMenu;
-import net.minecraft.world.inventory.ClickType;
+import net.minecraft.world.inventory.ContainerInput;
 import net.minecraft.world.inventory.MenuType;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
@@ -68,28 +68,28 @@ public final class FrontlineMenu extends ChestMenu {
 		Data d = g.data;
 		for (int i = 0; i < container.getContainerSize(); i++) container.setItem(i, ItemStack.EMPTY);
 
-		container.setItem(0, item(Items.LIME_CONCRETE, Lang.str(lang, "item.start"), ChatFormatting.GREEN));
+		container.setItem(0, item(Items.CONCRETE.lime(), Lang.str(lang, "item.start"), ChatFormatting.GREEN));
 		if (g.phase == Game.Phase.PAUSED) {
-			container.setItem(1, item(Items.YELLOW_CONCRETE, Lang.str(lang, "item.resume"), ChatFormatting.YELLOW));
+			container.setItem(1, item(Items.CONCRETE.yellow(), Lang.str(lang, "item.resume"), ChatFormatting.YELLOW));
 		} else {
-			container.setItem(1, item(Items.YELLOW_CONCRETE, Lang.str(lang, "item.pause"), ChatFormatting.YELLOW));
+			container.setItem(1, item(Items.CONCRETE.yellow(), Lang.str(lang, "item.pause"), ChatFormatting.YELLOW));
 		}
-		container.setItem(2, item(Items.RED_CONCRETE, Lang.str(lang, "item.stop"), ChatFormatting.RED));
+		container.setItem(2, item(Items.CONCRETE.red(), Lang.str(lang, "item.stop"), ChatFormatting.RED));
 		container.setItem(4, item(Items.COMPASS, Lang.str(lang, "item.swap"), ChatFormatting.AQUA,
 				Lang.str(lang, d.redPushesUp ? "cmd.swapUp" : "cmd.swapDown")));
 		container.setItem(6, item(Items.WRITABLE_BOOK, Lang.str(lang, "item.savePreset", PRESET), ChatFormatting.GOLD));
 		container.setItem(7, item(Items.BOOK, Lang.str(lang, "item.loadPreset", PRESET), ChatFormatting.GOLD));
 
-		container.setItem(9, item(Items.RED_STAINED_GLASS_PANE, "-10", ChatFormatting.RED));
+		container.setItem(9, item(Items.STAINED_GLASS_PANE.red(), "-10", ChatFormatting.RED));
 		container.setItem(10, item(Items.CLOCK, Lang.str(lang, "item.capTime", d.captureSeconds), ChatFormatting.WHITE));
-		container.setItem(11, item(Items.LIME_STAINED_GLASS_PANE, "+10", ChatFormatting.GREEN));
-		container.setItem(13, item(Items.RED_STAINED_GLASS_PANE, "-10", ChatFormatting.RED));
+		container.setItem(11, item(Items.STAINED_GLASS_PANE.lime(), "+10", ChatFormatting.GREEN));
+		container.setItem(13, item(Items.STAINED_GLASS_PANE.red(), "-10", ChatFormatting.RED));
 		container.setItem(14, item(Items.CLOCK, Lang.str(lang, "item.holdTime", d.holdSeconds), ChatFormatting.WHITE));
-		container.setItem(15, item(Items.LIME_STAINED_GLASS_PANE, "+10", ChatFormatting.GREEN));
+		container.setItem(15, item(Items.STAINED_GLASS_PANE.lime(), "+10", ChatFormatting.GREEN));
 
-		container.setItem(18, item(Items.RED_BANNER, Lang.str(lang, "item.joinRed"), ChatFormatting.RED));
-		container.setItem(19, item(Items.BLUE_BANNER, Lang.str(lang, "item.joinBlue"), ChatFormatting.BLUE));
-		container.setItem(20, item(Items.WHITE_BANNER, Lang.str(lang, "item.leave"), ChatFormatting.WHITE));
+		container.setItem(18, item(Items.BANNER.red(), Lang.str(lang, "item.joinRed"), ChatFormatting.RED));
+		container.setItem(19, item(Items.BANNER.blue(), Lang.str(lang, "item.joinBlue"), ChatFormatting.BLUE));
+		container.setItem(20, item(Items.BANNER.white(), Lang.str(lang, "item.leave"), ChatFormatting.WHITE));
 		container.setItem(21, item(Items.ENDER_EYE, Lang.str(lang, "item.auto"), ChatFormatting.LIGHT_PURPLE));
 
 		int center = d.centerIndex();
@@ -97,7 +97,7 @@ public final class FrontlineMenu extends ChestMenu {
 			CapPoint p = d.points.get(i);
 			String title = (i + 1) + ". " + p.name + (i == center ? " " + Lang.str(lang, "cmd.list.center") : "")
 					+ (p.complete() ? "" : " " + Lang.str(lang, "cmd.list.incomplete"));
-			container.setItem(POINT_START + i, item(i == center ? Items.BEACON : Items.WHITE_CONCRETE, title,
+			container.setItem(POINT_START + i, item(i == center ? Items.BEACON : Items.CONCRETE.white(), title,
 					i == center ? ChatFormatting.GOLD : ChatFormatting.WHITE,
 					Lang.str(lang, "item.point.lore1"), Lang.str(lang, "item.point.lore2"), Lang.str(lang, "item.point.lore3")));
 		}
@@ -106,7 +106,7 @@ public final class FrontlineMenu extends ChestMenu {
 	// ------------------------------------------------------------------ interaction
 
 	@Override
-	public void clicked(int slotId, int button, ClickType clickType, Player player) {
+	public void clicked(int slotId, int button, ContainerInput clickType, Player player) {
 		if (!(player instanceof ServerPlayer sp) || !canUse(sp)) return;
 		if (slotId < 0 || slotId >= 54) return;
 		Game g = Game.INSTANCE;
@@ -143,7 +143,7 @@ public final class FrontlineMenu extends ChestMenu {
 			default -> {
 				int idx = slotId - POINT_START;
 				if (idx >= 0 && idx < d.points.size()) {
-					if (clickType == ClickType.QUICK_MOVE) g.movePoint(idx, 1);
+					if (clickType == ContainerInput.QUICK_MOVE) g.movePoint(idx, 1);
 					else if (button == 1) g.movePoint(idx, -1);
 					else {
 						d.center = d.points.get(idx).name;

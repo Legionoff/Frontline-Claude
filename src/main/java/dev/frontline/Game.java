@@ -45,7 +45,7 @@ public final class Game {
 		this.server = s;
 		this.data = Storage.load();
 		for (String code : Lang.CODES) {
-			ServerBossEvent b = new ServerBossEvent(Component.literal(""), BossEvent.BossBarColor.WHITE, BossEvent.BossBarOverlay.PROGRESS);
+			ServerBossEvent b = new ServerBossEvent(java.util.UUID.randomUUID(), Component.literal(""), BossEvent.BossBarColor.WHITE, BossEvent.BossBarOverlay.PROGRESS);
 			b.setVisible(true);
 			bars.put(code, b);
 		}

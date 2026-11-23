@@ -18,7 +18,7 @@ public class FrontlineMod implements ModInitializer {
 	public void onInitialize() {
 		Lang.load();
 
-		PayloadTypeRegistry.playC2S().register(OpenMenuPayload.TYPE, OpenMenuPayload.CODEC);
+		PayloadTypeRegistry.serverboundPlay().register(OpenMenuPayload.TYPE, OpenMenuPayload.CODEC);
 		ServerPlayNetworking.registerGlobalReceiver(OpenMenuPayload.TYPE, (payload, context) -> {
 			if (FrontlineMenu.canUse(context.player())) {
 				FrontlineMenu.open(context.player());
