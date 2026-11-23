@@ -70,5 +70,7 @@
   "item.delete": "Delete point",
   "item.moveEarlier": "Move earlier in order",
   "item.moveLater": "Move later in order",
-  "cmd.rename": "Point %s renamed to %s."
+  "cmd.rename": "Point %s renamed to %s.",
+  "title.victory": "VICTORY",
+  "title.defeat": "DEFEAT"
 }

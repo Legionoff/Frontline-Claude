@@ -70,5 +70,7 @@
   "item.delete": "Punkt löschen",
   "item.moveEarlier": "In der Reihenfolge nach vorne",
   "item.moveLater": "In der Reihenfolge nach hinten",
-  "cmd.rename": "Punkt %s in %s umbenannt."
+  "cmd.rename": "Punkt %s in %s umbenannt.",
+  "title.victory": "SIEG",
+  "title.defeat": "NIEDERLAGE"
 }

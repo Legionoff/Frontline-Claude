@@ -244,12 +244,23 @@ public final class Game {
 	private void finish(Team winner) {
 		phase = Phase.STOPPED;
 		hideBars();
+		resetPoint();
+		activeIdx = data.centerIndex();
 		for (ServerPlayer p : server.getPlayerList().getPlayers()) {
 			String lang = Lang.of(p);
+			Team mine = teamOf(p);
 			p.sendSystemMessage(Lang.comp(lang, "chat.final", winner.display(lang)));
+			net.minecraft.network.chat.MutableComponent title;
+			if (mine == winner) {
+				title = Lang.comp(lang, "title.victory").withStyle(net.minecraft.ChatFormatting.GREEN, net.minecraft.ChatFormatting.BOLD);
+			} else if (mine != null) {
+				title = Lang.comp(lang, "title.defeat").withStyle(net.minecraft.ChatFormatting.RED, net.minecraft.ChatFormatting.BOLD);
+			} else {
+				title = Lang.comp(lang, "title.over").withStyle(net.minecraft.ChatFormatting.GOLD, net.minecraft.ChatFormatting.BOLD);
+			}
 			p.connection.send(new ClientboundSetTitlesAnimationPacket(10, 80, 20));
 			p.connection.send(new ClientboundSetSubtitleTextPacket(Lang.comp(lang, "title.winner", winner.display(lang))));
-			p.connection.send(new ClientboundSetTitleTextPacket(Lang.comp(lang, "title.over").withStyle(net.minecraft.ChatFormatting.GOLD, net.minecraft.ChatFormatting.BOLD)));
+			p.connection.send(new ClientboundSetTitleTextPacket(title));
 		}
 	}
 

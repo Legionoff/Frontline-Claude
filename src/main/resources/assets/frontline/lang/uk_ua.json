@@ -70,5 +70,7 @@
   "item.delete": "Видалити точку",
   "item.moveEarlier": "Зсунути раніше в порядку",
   "item.moveLater": "Зсунути пізніше в порядку",
-  "cmd.rename": "Точку %s перейменовано на %s."
+  "cmd.rename": "Точку %s перейменовано на %s.",
+  "title.victory": "ПЕРЕМОГА",
+  "title.defeat": "ПОРАЗКА"
 }
