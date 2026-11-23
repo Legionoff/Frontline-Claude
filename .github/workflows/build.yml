@@ -21,6 +21,22 @@ jobs:
           gradle-version: 9.7.1
       - name: Build
         run: gradle build --stacktrace
+      - name: API diagnostics
+        if: failure()
+        run: |
+          J=$(find ~/.gradle -name 'minecraft*.jar' -not -name '*sources*' | head -5)
+          echo "JARS: $J"
+          for j in $J; do
+            echo "== $j"
+            unzip -l "$j" | grep -E 'world/inventory/.*Click|world/inventory/Container[A-Z]' | head -20
+            javap -cp "$j" net.minecraft.world.item.Items | grep -E 'CONCRETE|BANNER|GLASS_PANE' | head -20
+            javap -cp "$j" net.minecraft.server.level.ServerBossEvent | head -20
+            javap -cp "$j" com.mojang.blaze3d.platform.InputConstants\$Type | head -20
+            javap -cp "$j" net.minecraft.world.inventory.AbstractContainerMenu | grep -E 'clicked|Click|Input' | head
+          done
+          F=$(find ~/.gradle -name 'fabric-networking-api-v1*.jar' -not -name '*sources*' | head -1)
+          echo "NET: $F"
+          javap -cp "$F" net.fabricmc.fabric.api.networking.v1.PayloadTypeRegistry | head -20
       - uses: actions/upload-artifact@v4
         with:
           name: frontline-gamemode
