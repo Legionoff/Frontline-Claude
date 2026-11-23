@@ -1,0 +1,20 @@
+{
+  "schemaVersion": 1,
+  "id": "frontline",
+  "version": "${version}",
+  "name": "Frontline Gamemode",
+  "description": "Tug-of-war capture point game mode.",
+  "authors": ["Legionoff"],
+  "license": "MIT",
+  "environment": "*",
+  "entrypoints": {
+    "main": ["dev.frontline.FrontlineMod"],
+    "client": ["dev.frontline.client.FrontlineClient"]
+  },
+  "depends": {
+    "fabricloader": ">=0.20.0",
+    "minecraft": "26.3",
+    "java": ">=25",
+    "fabric-api": "*"
+  }
+}
