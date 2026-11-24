@@ -202,8 +202,8 @@ public final class Game {
 		int hold = holdLimit();
 
 		if (sup == null) {
-			// empty point: progress slowly rolls back (hold first, then capture)
-			rollback(data.captureDecay, data.holdDecay);
+			// empty point: the hold bar rolls back; a finished capture stays (save point), an unfinished one rolls back
+			rollback(data.captureDecay, data.holdDecay, false);
 			return;
 		}
 
@@ -228,15 +228,16 @@ public final class Game {
 		} else {
 			// the enemy has the progress: their presence speeds the rollback up
 			double accel = Math.max(1.0, data.rollbackAccel);
-			rollback(data.captureDecay * accel, data.holdDecay * accel);
+			rollback(data.captureDecay * accel, data.holdDecay * accel, true);
 		}
 	}
 
-	private void rollback(double capRate, double holdRate) {
+	/** @param eatCapture false: a finished capture is a save point and is kept (only the hold bar rolls back) */
+	private void rollback(double capRate, double holdRate, boolean eatCapture) {
 		if (capTeam == null) return;
 		if (holdTicks > 0) {
 			holdTicks = Math.max(0, holdTicks - holdRate);
-		} else if (capTicks > 0) {
+		} else if (capTicks > 0 && (eatCapture || capTicks < capLimit())) {
 			capTicks -= capRate;
 			if (capTicks <= 0) {
 				capTicks = 0;
