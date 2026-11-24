@@ -7,6 +7,10 @@ King-of-the-hill tug-of-war: two teams fight over one capture point at a time an
 Pushing to GitHub runs the `build` workflow; the jar is in the run's artifacts, and on `main` also in the **latest** release.
 Requires Fabric Loader >= 0.20.0, Fabric API, Java 25. Put the jar in the server's `mods` folder.
 
+## Permissions
+Everything that edits the game (rounds, points, settings, assigning other players) needs operator rights (`/op`).
+Everybody else can only open a small menu (key K or `/frontline menu`) and pick their own team, or use `/frontline join red|blue|leave`.
+
 ## Commands (permission: gamemaster)
 - `/cappoint create <name>` · `remove <name>` · `list` · `center <name>` · `move <name> earlier|later`
 - `/cappoint edge <name> pos1|pos2 [x y z]` (without coordinates: your position; height counts). Names with non-ASCII letters or spaces need quotes.
