@@ -81,9 +81,9 @@
   "item.rollbackAccel": "Übernahme-Beschleunigung: %s",
   "item.rollbackAccel.lore": "Multiplikator für den Rücklauf, wenn der Gegner den Punkt übernimmt (1X–5X)",
   "item.capDecay": "Eroberungs-Rücklauf: %s",
-  "item.capDecay.lore": "Geschwindigkeit, mit der eine verlassene Eroberung zurückläuft",
+  "item.capDecay.lore": "Geschwindigkeit, mit der eine verlassene Eroberung zurückläuft (0.5X-2.5X)",
   "item.holdDecay": "Halte-Rücklauf: %s",
-  "item.holdDecay.lore": "Geschwindigkeit, mit der ein verlassenes Halten zurückläuft",
-  "item.cycle.lore1": "Linksklick: nächster Wert (0.5X-2.5X)",
+  "item.holdDecay.lore": "Geschwindigkeit, mit der ein verlassenes Halten zurückläuft (0.5X-2.5X)",
+  "item.cycle.lore1": "Linksklick: nächster Wert",
   "item.cycle.lore2": "Rechtsklick: vorheriger Wert"
 }
