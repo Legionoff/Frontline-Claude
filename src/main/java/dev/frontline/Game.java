@@ -227,7 +227,8 @@ public final class Game {
 			}
 		} else {
 			// the enemy has the progress: their presence speeds the rollback up
-			rollback(data.captureDecay * data.rollbackAccel, data.holdDecay * data.rollbackAccel);
+			double accel = Math.max(1.0, data.rollbackAccel);
+			rollback(data.captureDecay * accel, data.holdDecay * accel);
 		}
 	}
 
