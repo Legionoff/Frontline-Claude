@@ -50,6 +50,19 @@ public final class Cmds {
 		return Game.INSTANCE.data;
 	}
 
+	private static LiteralArgumentBuilder<CommandSourceStack> adminLit(String name) {
+		return Commands.literal(name).requires(Commands.hasPermission(Commands.LEVEL_GAMEMASTERS));
+	}
+
+	private static int join(CommandContext<CommandSourceStack> c, Team t) {
+		ServerPlayer p = c.getSource().getPlayer();
+		if (p == null) return fail(c, "cmd.notPlayer");
+		Game.INSTANCE.setTeam(p, t);
+		String lang = Lang.of(p);
+		p.sendSystemMessage(t == null ? Lang.comp(lang, "cmd.left") : Lang.comp(lang, "cmd.joined", t.display(lang)));
+		return 1;
+	}
+
 	public static void register(CommandDispatcher<CommandSourceStack> d) {
 		LiteralArgumentBuilder<CommandSourceStack> cap = Commands.literal("cappoint")
 				.requires(Commands.hasPermission(Commands.LEVEL_GAMEMASTERS));
@@ -69,25 +82,29 @@ public final class Cmds {
 						.then(Commands.argument("pos", BlockPosArgument.blockPos()).executes(c -> edge(c, 2, BlockPosArgument.getBlockPos(c, "pos")))))));
 		d.register(cap);
 
-		LiteralArgumentBuilder<CommandSourceStack> fl = Commands.literal("frontline")
-				.requires(Commands.hasPermission(Commands.LEVEL_GAMEMASTERS));
+		// /frontline itself is open to everybody (menu, join); every other subcommand needs operator rights
+		LiteralArgumentBuilder<CommandSourceStack> fl = Commands.literal("frontline");
 
-		fl.then(Commands.literal("start").executes(Cmds::start));
-		fl.then(Commands.literal("stop").executes(c -> { Game.INSTANCE.stop(); return 1; }));
-		fl.then(Commands.literal("pause").executes(c -> { Game.INSTANCE.pause(); return 1; }));
-		fl.then(Commands.literal("resume").executes(c -> { Game.INSTANCE.resume(); return 1; }));
+		fl.then(Commands.literal("join")
+				.then(Commands.literal("red").executes(x -> join(x, Team.RED)))
+				.then(Commands.literal("blue").executes(x -> join(x, Team.BLUE)))
+				.then(Commands.literal("leave").executes(x -> join(x, null))));
+		fl.then(adminLit("start").executes(Cmds::start));
+		fl.then(adminLit("stop").executes(c -> { Game.INSTANCE.stop(); return 1; }));
+		fl.then(adminLit("pause").executes(c -> { Game.INSTANCE.pause(); return 1; }));
+		fl.then(adminLit("resume").executes(c -> { Game.INSTANCE.resume(); return 1; }));
 		fl.then(Commands.literal("menu").executes(c -> {
 			ServerPlayer p = c.getSource().getPlayer();
 			if (p == null) return fail(c, "cmd.notPlayer");
 			FrontlineMenu.open(p);
 			return 1;
 		}));
-		fl.then(Commands.literal("swap").executes(c -> {
+		fl.then(adminLit("swap").executes(c -> {
 			Game.INSTANCE.swapSides();
 			ok(c, data().redPushesUp ? "cmd.swapUp" : "cmd.swapDown");
 			return 1;
 		}));
-		fl.then(Commands.literal("time")
+		fl.then(adminLit("time")
 				.then(Commands.literal("capture").then(Commands.argument("seconds", IntegerArgumentType.integer(1, 3600)).executes(c -> {
 					data().captureSeconds = IntegerArgumentType.getInteger(c, "seconds");
 					Game.INSTANCE.save();
@@ -100,7 +117,7 @@ public final class Cmds {
 					ok(c, "cmd.time", "hold", data().holdSeconds);
 					return 1;
 				}))));
-		fl.then(Commands.literal("team")
+		fl.then(adminLit("team")
 				.then(Commands.literal("red").then(Commands.argument("targets", EntityArgument.players()).executes(c -> team(c, Team.RED))))
 				.then(Commands.literal("blue").then(Commands.argument("targets", EntityArgument.players()).executes(c -> team(c, Team.BLUE))))
 				.then(Commands.literal("none").then(Commands.argument("targets", EntityArgument.players()).executes(c -> team(c, null))))
@@ -109,7 +126,7 @@ public final class Cmds {
 					ok(c, "cmd.teamAuto", n);
 					return n;
 				})));
-		fl.then(Commands.literal("preset")
+		fl.then(adminLit("preset")
 				.then(Commands.literal("save").then(Commands.argument("preset", StringArgumentType.word()).executes(c -> {
 					String n = StringArgumentType.getString(c, "preset");
 					if (!Storage.savePreset(data(), n)) return fail(c, "cmd.preset.error");

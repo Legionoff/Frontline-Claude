@@ -21,9 +21,7 @@ public class FrontlineMod implements ModInitializer {
 
 		PayloadTypeRegistry.serverboundPlay().register(OpenMenuPayload.TYPE, OpenMenuPayload.CODEC);
 		ServerPlayNetworking.registerGlobalReceiver(OpenMenuPayload.TYPE, (payload, context) -> {
-			if (FrontlineMenu.canUse(context.player())) {
-				FrontlineMenu.open(context.player());
-			}
+			FrontlineMenu.open(context.player()); // operators get the hub, everybody else the team menu
 		});
 
 		CommandRegistrationCallback.EVENT.register((dispatcher, registryAccess, environment) ->
@@ -38,6 +36,7 @@ public class FrontlineMod implements ModInitializer {
 		ServerMessageEvents.ALLOW_CHAT_MESSAGE.register((message, sender, params) -> {
 			String pointName = Game.INSTANCE.pendingRename.remove(sender.getUUID());
 			if (pointName == null) return true;
+			if (!FrontlineMenu.canUse(sender)) return true;
 			String text = message.signedContent().trim();
 			String lang = Lang.of(sender);
 			CapPoint p = Game.INSTANCE.data.find(pointName);

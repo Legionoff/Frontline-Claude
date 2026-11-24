@@ -87,6 +87,17 @@ public final class Game {
 		save();
 	}
 
+	public int count(Team t) {
+		int n = 0;
+		for (ServerPlayer p : server.getPlayerList().getPlayers()) if (teamOf(p) == t) n++;
+		return n;
+	}
+
+	public void clearTeams() {
+		data.teams.clear();
+		save();
+	}
+
 	public int autoBalance() {
 		List<ServerPlayer> players = new ArrayList<>(server.getPlayerList().getPlayers());
 		Collections.shuffle(players);
