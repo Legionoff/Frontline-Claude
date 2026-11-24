@@ -79,7 +79,7 @@
   "item.renamePrompt": "Schreibe den neuen Namen von Punkt %s in den Chat (oder 'cancel').",
   "cmd.rename.empty": "Der Name darf nicht leer sein.",
   "item.rollbackAccel": "Übernahme-Beschleunigung: %s",
-  "item.rollbackAccel.lore": "Multiplikator für den Rücklauf, wenn der Gegner den Punkt übernimmt (1X–2.5X)",
+  "item.rollbackAccel.lore": "Multiplikator für den Rücklauf, wenn der Gegner den Punkt übernimmt (1X–5X)",
   "item.capDecay": "Eroberungs-Rücklauf: %s",
   "item.capDecay.lore": "Geschwindigkeit, mit der eine verlassene Eroberung zurückläuft",
   "item.holdDecay": "Halte-Rücklauf: %s",

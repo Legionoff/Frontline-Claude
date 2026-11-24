@@ -80,9 +80,13 @@ public final class FrontlineMenu extends ChestMenu {
 
 	/** steps through lo/2 .. 2.5 in 0.5 increments (lo in half-steps) */
 	private static double cycle(double v, boolean forward, int lo) {
-		int i = Math.max(lo, (int) Math.round(v * 2)) + (forward ? 1 : -1);
-		if (i > 5) i = lo;
-		if (i < lo) i = 5;
+		return cycle(v, forward, lo, 5);
+	}
+
+	private static double cycle(double v, boolean forward, int lo, int hi) {
+		int i = Math.min(hi, Math.max(lo, (int) Math.round(v * 2))) + (forward ? 1 : -1);
+		if (i > hi) i = lo;
+		if (i < lo) i = hi;
 		return i / 2.0;
 	}
 
@@ -236,7 +240,7 @@ public final class FrontlineMenu extends ChestMenu {
 			case 11 -> { d.captureSeconds = Math.min(3600, d.captureSeconds + 10); g.save(); }
 			case 13 -> { d.holdSeconds = Math.max(1, d.holdSeconds - 10); g.save(); }
 			case 15 -> { d.holdSeconds = Math.min(3600, d.holdSeconds + 10); g.save(); }
-			case 8 -> { d.rollbackAccel = cycle(d.rollbackAccel, button != 1, 2); g.save(); }
+			case 8 -> { d.rollbackAccel = cycle(d.rollbackAccel, button != 1, 2, 10); g.save(); }
 			case 16 -> { d.captureDecay = cycle(d.captureDecay, button != 1); g.save(); }
 			case 17 -> { d.holdDecay = cycle(d.holdDecay, button != 1); g.save(); }
 			case 18 -> g.setTeam(sp, Team.RED);
