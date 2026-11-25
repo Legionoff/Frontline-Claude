@@ -81,9 +81,9 @@
   "item.rollbackAccel": "Übernahme-Beschleunigung: %s",
   "item.rollbackAccel.lore": "Multiplikator für den Rücklauf, wenn der Gegner den Punkt übernimmt (1X–5X)",
   "item.capDecay": "Eroberungs-Rücklauf: %s",
-  "item.capDecay.lore": "Geschwindigkeit, mit der eine verlassene Eroberung zurückläuft (0.5X-2.5X)",
+  "item.capDecay.lore": "Geschwindigkeit, mit der eine verlassene Eroberung zurückläuft (0.25X-2.5X)",
   "item.holdDecay": "Halte-Rücklauf: %s",
-  "item.holdDecay.lore": "Geschwindigkeit, mit der ein verlassenes Halten zurückläuft (0.5X-2.5X)",
+  "item.holdDecay.lore": "Geschwindigkeit, mit der ein verlassenes Halten zurückläuft (0.25X-2.5X)",
   "item.cycle.lore1": "Linksklick: nächster Wert",
   "item.cycle.lore2": "Rechtsklick: vorheriger Wert",
   "menu.titlePlayer": "Frontline - Team wählen",
@@ -111,5 +111,7 @@
   "cmd.joined": "Du bist beigetreten: %s",
   "cmd.left": "Du bist in keinem Team mehr.",
   "cmd.teamsCleared": "Alle Teams wurden geleert.",
-  "cmd.noPermission": "Das dürfen nur Operatoren."
+  "cmd.noPermission": "Das dürfen nur Operatoren.",
+  "cmd.reload.done": "%s Eroberungspunkt(e) aus dem Weltordner geladen.",
+  "cmd.reload.missing": "frontline_points.json wurde im Weltordner nicht gefunden."
 }

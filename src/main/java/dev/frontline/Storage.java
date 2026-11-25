@@ -3,6 +3,8 @@ package dev.frontline;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import net.fabricmc.loader.api.FabricLoader;
+import net.minecraft.server.MinecraftServer;
+import net.minecraft.world.level.storage.LevelResource;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
@@ -19,6 +21,36 @@ public final class Storage {
 
 	private static Path dir() {
 		return FabricLoader.getInstance().getConfigDir().resolve("frontline");
+	}
+
+	/** The points live inside the world folder, so copying the world to a server brings them along. */
+	public static Path worldFile(MinecraftServer server) {
+		return server.getWorldPath(LevelResource.ROOT).resolve("frontline_points.json");
+	}
+
+	public static void saveWorld(MinecraftServer server, Data d) {
+		try {
+			Data copy = GSON.fromJson(GSON.toJson(d), Data.class);
+			copy.teams.clear();
+			Files.writeString(worldFile(server), GSON.toJson(copy), StandardCharsets.UTF_8);
+		} catch (Exception e) {
+			FrontlineMod.LOGGER.error("Could not write frontline_points.json into the world folder", e);
+		}
+	}
+
+	/** @return true if the world file existed and was applied to {@code into} */
+	public static boolean loadWorld(MinecraftServer server, Data into) {
+		Path f = worldFile(server);
+		try {
+			if (!Files.exists(f)) return false;
+			Data d = GSON.fromJson(Files.readString(f, StandardCharsets.UTF_8), Data.class);
+			if (d == null || d.points == null) return false;
+			into.copySetupFrom(d);
+			return true;
+		} catch (Exception e) {
+			FrontlineMod.LOGGER.error("Could not read frontline_points.json from the world folder", e);
+			return false;
+		}
 	}
 
 	private static Path presets() {

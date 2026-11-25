@@ -81,9 +81,9 @@
   "item.rollbackAccel": "Takeover speed-up: %s",
   "item.rollbackAccel.lore": "Multiplier for the rollback while the enemy takes over the point (1X-5X)",
   "item.capDecay": "Capture rollback: %s",
-  "item.capDecay.lore": "Speed at which an abandoned capture rolls back (0.5X-2.5X)",
+  "item.capDecay.lore": "Speed at which an abandoned capture rolls back (0.25X-2.5X)",
   "item.holdDecay": "Hold rollback: %s",
-  "item.holdDecay.lore": "Speed at which an abandoned hold rolls back (0.5X-2.5X)",
+  "item.holdDecay.lore": "Speed at which an abandoned hold rolls back (0.25X-2.5X)",
   "item.cycle.lore1": "Left click: next value",
   "item.cycle.lore2": "Right click: previous value",
   "menu.titlePlayer": "Frontline - choose team",
@@ -111,5 +111,7 @@
   "cmd.joined": "You joined: %s",
   "cmd.left": "You are no longer in a team.",
   "cmd.teamsCleared": "All teams were cleared.",
-  "cmd.noPermission": "Only operators can use this."
+  "cmd.noPermission": "Only operators can use this.",
+  "cmd.reload.done": "Reloaded %s capture point(s) from the world folder.",
+  "cmd.reload.missing": "frontline_points.json was not found in the world folder."
 }

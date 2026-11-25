@@ -89,6 +89,11 @@ public final class Cmds {
 				.then(Commands.literal("red").executes(x -> join(x, Team.RED)))
 				.then(Commands.literal("blue").executes(x -> join(x, Team.BLUE)))
 				.then(Commands.literal("leave").executes(x -> join(x, null))));
+		fl.then(adminLit("reload").executes(c -> {
+			if (!Game.INSTANCE.reloadWorld()) return fail(c, "cmd.reload.missing");
+			ok(c, "cmd.reload.done", data().points.size());
+			return 1;
+		}));
 		fl.then(adminLit("start").executes(Cmds::start));
 		fl.then(adminLit("stop").executes(c -> { Game.INSTANCE.stop(); return 1; }));
 		fl.then(adminLit("pause").executes(c -> { Game.INSTANCE.pause(); return 1; }));
@@ -155,16 +160,8 @@ public final class Cmds {
 	public static boolean loadPreset(String name) {
 		Data p = Storage.loadPreset(name);
 		if (p == null) return false;
-		Data cur = Game.INSTANCE.data;
 		Game.INSTANCE.stop();
-		cur.points = p.points;
-		cur.center = p.center;
-		cur.captureSeconds = p.captureSeconds;
-		cur.holdSeconds = p.holdSeconds;
-		cur.redPushesUp = p.redPushesUp;
-		cur.captureDecay = p.captureDecay;
-		cur.holdDecay = p.holdDecay;
-		cur.rollbackAccel = p.rollbackAccel;
+		Game.INSTANCE.data.copySetupFrom(p);
 		Game.INSTANCE.save();
 		return true;
 	}

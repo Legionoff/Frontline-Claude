@@ -81,9 +81,9 @@
   "item.rollbackAccel": "Ускорение перехвата: %s",
   "item.rollbackAccel.lore": "Множитель отката, когда враг перехватывает точку (1X–5X)",
   "item.capDecay": "Откат захвата: %s",
-  "item.capDecay.lore": "Скорость отката брошенного захвата (0.5X-2.5X)",
+  "item.capDecay.lore": "Скорость отката брошенного захвата (0.25X-2.5X)",
   "item.holdDecay": "Откат удержания: %s",
-  "item.holdDecay.lore": "Скорость отката брошенного удержания (0.5X-2.5X)",
+  "item.holdDecay.lore": "Скорость отката брошенного удержания (0.25X-2.5X)",
   "item.cycle.lore1": "ЛКМ: следующее значение",
   "item.cycle.lore2": "ПКМ: предыдущее значение",
   "menu.titlePlayer": "Frontline - выбор команды",
@@ -111,5 +111,7 @@
   "cmd.joined": "Вы вступили в команду: %s",
   "cmd.left": "Вы больше не состоите в команде.",
   "cmd.teamsCleared": "Все команды очищены.",
-  "cmd.noPermission": "Это доступно только операторам."
+  "cmd.noPermission": "Это доступно только операторам.",
+  "cmd.reload.done": "Из папки мира загружено точек: %s.",
+  "cmd.reload.missing": "Файл frontline_points.json в папке мира не найден."
 }

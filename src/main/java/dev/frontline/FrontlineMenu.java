@@ -105,6 +105,17 @@ public final class FrontlineMenu extends ChestMenu {
 		return i / 2.0;
 	}
 
+	private static final double[] DECAY_VALUES = {0.25, 0.5, 1, 1.5, 2, 2.5};
+
+	private static double cycleDecay(double v, boolean forward) {
+		int best = 0;
+		for (int i = 0; i < DECAY_VALUES.length; i++) {
+			if (Math.abs(DECAY_VALUES[i] - v) < Math.abs(DECAY_VALUES[best] - v)) best = i;
+		}
+		int n = DECAY_VALUES.length;
+		return DECAY_VALUES[(best + (forward ? 1 : n - 1)) % n];
+	}
+
 	private static String coords(int[] p, String lang) {
 		return p == null ? Lang.str(lang, "item.notSet") : p[0] + " " + p[1] + " " + p[2];
 	}
@@ -355,8 +366,8 @@ public final class FrontlineMenu extends ChestMenu {
 			case 12 -> d.captureSeconds = Math.min(3600, d.captureSeconds + 10);
 			case 14 -> d.holdSeconds = Math.max(1, d.holdSeconds - 10);
 			case 16 -> d.holdSeconds = Math.min(3600, d.holdSeconds + 10);
-			case 29 -> d.captureDecay = cycle(d.captureDecay, button != 1, 1, 5);
-			case 31 -> d.holdDecay = cycle(d.holdDecay, button != 1, 1, 5);
+			case 29 -> d.captureDecay = cycleDecay(d.captureDecay, button != 1);
+			case 31 -> d.holdDecay = cycleDecay(d.holdDecay, button != 1);
 			case 33 -> d.rollbackAccel = cycle(d.rollbackAccel, button != 1, 2, 10);
 			case 38 -> {
 				Storage.savePreset(d, PRESET);

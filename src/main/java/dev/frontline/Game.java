@@ -58,6 +58,8 @@ public final class Game {
 	public void onStart(MinecraftServer s) {
 		this.server = s;
 		this.data = Storage.load();
+		if (Storage.loadWorld(s, data)) FrontlineMod.LOGGER.info("Loaded {} capture point(s) from the world folder", data.points.size());
+		else if (!data.points.isEmpty()) Storage.saveWorld(s, data); // first start in this world: copy points into it
 		for (String code : Lang.CODES) {
 			ServerBossEvent b = new ServerBossEvent(java.util.UUID.randomUUID(), Component.literal(""), BossEvent.BossBarColor.WHITE, BossEvent.BossBarOverlay.PROGRESS);
 			b.setVisible(true);
@@ -73,6 +75,15 @@ public final class Game {
 
 	public void save() {
 		Storage.save(data);
+		if (server != null) Storage.saveWorld(server, data);
+	}
+
+	/** Re-reads frontline_points.json from the world folder (after replacing the file by hand). */
+	public boolean reloadWorld() {
+		if (server == null || !Storage.loadWorld(server, data)) return false;
+		stop();
+		Storage.save(data);
+		return true;
 	}
 
 	// ------------------------------------------------------------------ teams

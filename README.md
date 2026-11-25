@@ -24,3 +24,9 @@ Red pulls the rope toward the last point, Blue toward the first (`/frontline swa
 The menu (key K by default, rebindable in Controls, or `/frontline menu`) offers every function, including creating points, setting their corners at your position and reordering them (`/cappoint` commands still work too, plus `/cappoint rename`).
 Languages: English, Russian, German, Ukrainian (chosen from the player's client language).
 Data lives in `config/frontline/` (`state.json`, `presets/`).
+
+## Moving a map from singleplayer to a server
+Points, their coordinates, the central point, times and rollback settings are stored inside the world folder in `frontline_points.json`
+(updated automatically on every change). Copy the whole world folder to the server (with the mod installed) and everything is there
+when the server starts. If you replace the file while the server runs, use `/frontline reload`.
+Teams are not copied because player IDs differ between singleplayer and a server.

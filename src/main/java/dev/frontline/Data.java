@@ -20,6 +20,18 @@ public final class Data {
 	/** player UUID -> team name */
 	public Map<String, String> teams = new HashMap<>();
 
+	/** Copies everything that describes the map setup (not the teams). */
+	public void copySetupFrom(Data p) {
+		points = p.points;
+		center = p.center;
+		captureSeconds = p.captureSeconds;
+		holdSeconds = p.holdSeconds;
+		redPushesUp = p.redPushesUp;
+		captureDecay = p.captureDecay;
+		holdDecay = p.holdDecay;
+		rollbackAccel = p.rollbackAccel;
+	}
+
 	public CapPoint find(String name) {
 		for (CapPoint p : points) if (p.name.equalsIgnoreCase(name)) return p;
 		return null;

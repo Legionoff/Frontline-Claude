@@ -81,9 +81,9 @@
   "item.rollbackAccel": "Прискорення перехоплення: %s",
   "item.rollbackAccel.lore": "Множник відкату, коли ворог перехоплює точку (1X–5X)",
   "item.capDecay": "Відкат захоплення: %s",
-  "item.capDecay.lore": "Швидкість відкату покинутого захоплення (0.5X-2.5X)",
+  "item.capDecay.lore": "Швидкість відкату покинутого захоплення (0.25X-2.5X)",
   "item.holdDecay": "Відкат утримання: %s",
-  "item.holdDecay.lore": "Швидкість відкату покинутого утримання (0.5X-2.5X)",
+  "item.holdDecay.lore": "Швидкість відкату покинутого утримання (0.25X-2.5X)",
   "item.cycle.lore1": "ЛКМ: наступне значення",
   "item.cycle.lore2": "ПКМ: попереднє значення",
   "menu.titlePlayer": "Frontline - вибір команди",
@@ -111,5 +111,7 @@
   "cmd.joined": "Ви приєдналися до команди: %s",
   "cmd.left": "Ви більше не в команді.",
   "cmd.teamsCleared": "Усі команди очищено.",
-  "cmd.noPermission": "Це доступно лише операторам."
+  "cmd.noPermission": "Це доступно лише операторам.",
+  "cmd.reload.done": "З папки світу завантажено точок: %s.",
+  "cmd.reload.missing": "Файл frontline_points.json у папці світу не знайдено."
 }
